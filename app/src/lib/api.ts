@@ -330,7 +330,7 @@ export class ApiClient {
     });
   }
 
-  // Preferences (stored in Vercel KV/Redis)
+  // Preferences (stored in backend persistence layer)
   async getPreferences() {
     return this.request<{
       default_model?: string;

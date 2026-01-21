@@ -90,17 +90,24 @@ class Settings(BaseSettings):
             "http://127.0.0.1:5173",
         ]
     
-    # Supabase
-    # Use VITE_ prefixed variables (shared with frontend)
-    SUPABASE_URL: str = os.getenv("VITE_SUPABASE_URL", "")
-    SUPABASE_KEY: str = os.getenv("VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY", "")
-    SUPABASE_SERVICE_KEY: str = os.getenv("SUPABASE_SERVICE_KEY", "")
+    # Qdrant (single persistence layer)
+    QDRANT_URL: str = os.getenv("QDRANT_URL", "")
+    QDRANT_API_KEY: str = os.getenv("QDRANT_API_KEY", "")
+
+    # Embeddings (used for Qdrant vectors; keep aligned with mem0 if used)
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_EMBEDDING_MODEL: str = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+    QDRANT_MESSAGE_VECTOR_SIZE: int = int(os.getenv("QDRANT_MESSAGE_VECTOR_SIZE", "1536"))
+    QDRANT_CAPSULE_VECTOR_SIZE: int = int(os.getenv("QDRANT_CAPSULE_VECTOR_SIZE", "1536"))
+
+    # Secret encryption (agent api_key at rest)
+    API_KEY_ENCRYPTION_SECRET: str = os.getenv("API_KEY_ENCRYPTION_SECRET", "")
     
     # LLM API Keys
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
     
-    # Mem0 Platform API Key (for hosted memory service)
-    MEM0_API_KEY: str = os.getenv("MEM0_API_KEY", "")
+    # Mem0 (open-source). We do NOT use the hosted platform (Qdrant is the only persistence layer).
+    MEM0_ENABLED: bool = os.getenv("MEM0_ENABLED", "True").lower() == "true"
     
     # Solana
     SOLANA_RPC_URL: str = os.getenv("SOLANA_RPC_URL", "https://api.devnet.solana.com")

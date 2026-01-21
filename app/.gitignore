@@ -24,4 +24,3 @@ dist-ssr
 .env
 
 backend/.env
-backend/supabase/.env

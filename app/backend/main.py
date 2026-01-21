@@ -8,7 +8,7 @@ import os
 
 from app.api.v1 import agents, marketplace, capsules, wallet, auth, preferences
 from app.core.config import settings
-from app.db.database import init_db, get_supabase
+from app.services.qdrant_service import init_qdrant_service, get_qdrant_service
 
 # Configure logging
 log_level = logging.INFO
@@ -28,7 +28,8 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting Mantlememo API...")
-    await init_db()
+    # Initialize Qdrant (single persistence layer) and hard-fail if unreachable
+    init_qdrant_service()
     
     # Initialize memory service (warm up)
     try:
@@ -88,13 +89,13 @@ async def health_check():
         "services": {}
     }
     
-    # Check database
-    supabase = get_supabase()
-    status["services"]["database"] = "available" if supabase else "unavailable"
-    
-    # Check Redis/KV (optional)
-    from app.services.cache_service import cache_service
-    status["services"]["cache"] = "available" if cache_service.redis_available else "unavailable"
+    # Check Qdrant (required)
+    try:
+        qdrant = get_qdrant_service()
+        qdrant.ping()
+        status["services"]["qdrant"] = "available"
+    except Exception:
+        status["services"]["qdrant"] = "unavailable"
     
     # Check memory service (optional)
     try:
@@ -105,7 +106,7 @@ async def health_check():
         status["services"]["memory"] = "unavailable"
     
     # Return 503 if critical services are down in production
-    if not settings.DEBUG and not supabase:
+    if not settings.DEBUG and status["services"].get("qdrant") != "available":
         return JSONResponse(
             content=status,
             status_code=http_status.HTTP_503_SERVICE_UNAVAILABLE

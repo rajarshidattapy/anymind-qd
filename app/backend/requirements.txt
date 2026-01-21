@@ -4,16 +4,16 @@ websockets>=11.0
 pydantic
 pydantic-settings
 python-dotenv
-supabase>=2.3.0
 httpx
 mem0ai
-chromadb
 tavily
-upstash-redis>=1.0.0
 
-# httpx version will be resolved by supabase dependency (requires httpx>=0.24.0,<0.25.0)
-# Note: chromadb may require httpx>=0.28.0 which conflicts with supabase
-# This is a known issue - functionality should still work despite the warning
+# Single persistence layer
+qdrant-client>=1.9.0
+
+# Encrypt agent API keys at rest
+cryptography>=41.0.0
+
 # Note: Mantle packages removed as they're not used in the backend
 # The code uses httpx directly for Mantle RPC calls
 

@@ -60,28 +60,23 @@ async def search_capsules(
 
 @router.get("/debug")
 async def debug_marketplace():
-    """Debug endpoint to check all capsules in database"""
+    """Debug endpoint to check all capsules in storage (Qdrant)"""
     import logging
     logger = logging.getLogger(__name__)
     
     try:
-        from app.db.database import get_supabase
-        supabase = get_supabase()
-        
-        if not supabase:
-            return {"error": "Supabase not configured"}
-        
-        # Get all capsules
-        all_capsules = supabase.table("capsules").select("*").execute()
-        
-        logger.info(f"DEBUG: Total capsules in DB: {len(all_capsules.data)}")
+        from app.services.qdrant_service import get_qdrant_service
+        qdrant = get_qdrant_service()
+        points, _ = qdrant.query_by_filter("capsules", qfilter=None, limit=1000)
+        logger.info(f"DEBUG: Total capsules in Qdrant: {len(points)}")
         
         result = {
-            "total_capsules": len(all_capsules.data),
+            "total_capsules": len(points),
             "capsules": []
         }
         
-        for row in all_capsules.data:
+        for p in points:
+            row = p.payload or {}
             stake_amount = row.get("stake_amount")
             result["capsules"].append({
                 "id": row.get("id"),

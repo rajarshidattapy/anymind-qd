@@ -11,7 +11,7 @@ const Settings = () => {
   const api = useApiClient();
   const { address, connected } = useWallet();
 
-  // Load preferences from Redis on mount
+  // Load preferences from backend (Qdrant) on mount
   useEffect(() => {
     const loadPreferences = async () => {
       if (!connected || !address) return;

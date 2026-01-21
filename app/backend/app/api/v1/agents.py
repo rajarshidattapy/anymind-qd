@@ -353,27 +353,7 @@ async def stake_on_agent(
     
     # Check if capsule already exists for this agent
     # We'll use agent_id as part of capsule metadata to track the relationship
-    try:
-        capsule_service._check_supabase()
-        # Search for existing capsule with this agent_id in metadata
-        result = capsule_service.supabase.table("capsules").select("*").eq("creator_wallet", wallet_address).execute()
-        existing_capsule = None
-        for row in result.data:
-            metadata = row.get("metadata", {})
-            # Handle both dict and string (JSON) formats
-            if isinstance(metadata, str):
-                try:
-                    import json
-                    metadata = json.loads(metadata)
-                except:
-                    metadata = {}
-            if isinstance(metadata, dict) and metadata.get("agent_id") == agent_id:
-                existing_capsule = row
-                # logger.info(f"Found existing capsule {row.get('id')} for agent {agent_id}")
-                break
-    except Exception as e:
-        # logger.error(f"Error checking for existing capsule: {e}")
-        existing_capsule = None
+    existing_capsule = await capsule_service.find_capsule_for_agent(wallet_address, agent_id)
     
     # Create capsule if it doesn't exist
     if not existing_capsule:
@@ -396,7 +376,7 @@ async def stake_on_agent(
         capsule_id = capsule.id
         # logger.info(f"Created capsule {capsule_id} for agent {agent_id}")
     else:
-        capsule_id = existing_capsule["id"]
+        capsule_id = existing_capsule.id
         # logger.info(f"Using existing capsule {capsule_id} for agent {agent_id}")
     
     # Create staking entry

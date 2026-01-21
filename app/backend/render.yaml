@@ -16,41 +16,33 @@ services:
       - key: CORS_ORIGINS
         value: https://mantlememo.vercel.app,https://www.mantlememo.vercel.app,http://localhost:8080,http://localhost:5173
       
-      # Supabase Configuration
-      - key: SUPABASE_URL
+      # Qdrant (single persistence layer)
+      - key: QDRANT_URL
         sync: false  # Set this manually in Render dashboard
-      - key: SUPABASE_KEY
-        sync: false  # Set this manually in Render dashboard (anon key)
-      - key: SUPABASE_SERVICE_KEY
-        sync: false  # Set this manually in Render dashboard
+      - key: QDRANT_API_KEY
+        sync: false  # Set this manually in Render dashboard (if needed)
+      - key: QDRANT_MESSAGE_VECTOR_SIZE
+        value: 1536
+      - key: QDRANT_CAPSULE_VECTOR_SIZE
+        value: 1536
+      - key: API_KEY_ENCRYPTION_SECRET
+        sync: false  # Optional; falls back to SECRET_KEY if not set
       
       # LLM API Keys
       - key: OPENROUTER_API_KEY
         sync: false  # Set this manually in Render dashboard
       - key: OPENAI_API_KEY
-        sync: false  # Set this manually in Render dashboard (optional)
+        sync: false  # Required for embeddings (messages semantic search) + mem0 OSS
       - key: ANTHROPIC_API_KEY
         sync: false  # Set this manually in Render dashboard (optional)
       - key: MISTRAL_API_KEY
         sync: false  # Set this manually in Render dashboard (optional)
       
       # Memory & Search Services
-      - key: MEM0_API_KEY
-        sync: false  # Set this manually in Render dashboard
+      - key: MEM0_ENABLED
+        value: true
       - key: TAVILY_API_KEY
         sync: false  # Set this manually in Render dashboard
-      
-      # Redis/Upstash Configuration
-      - key: UPSTASH_REDIS_REST_URL
-        sync: false  # Set this manually in Render dashboard
-      - key: UPSTASH_REDIS_REST_TOKEN
-        sync: false  # Set this manually in Render dashboard
-      - key: KV_REST_API_URL
-        sync: false  # Alternative name for Redis URL
-      - key: KV_REST_API_TOKEN
-        sync: false  # Alternative name for Redis token
-      - key: REDIS_URL
-        sync: false  # Full Redis connection string (optional)
       
       # Ethereum Network Configuration (Sepolia Testnet - change for production)
       - key: ETHEREUM_RPC_URL

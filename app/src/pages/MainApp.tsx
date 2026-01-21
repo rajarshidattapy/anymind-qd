@@ -40,7 +40,7 @@ const MainApp = () => {
     }
   }, [location.pathname]);
 
-  // Load preferences from Redis (Vercel KV) on mount (only once)
+  // Load preferences from backend (Qdrant) on mount (only once)
   useEffect(() => {
     if (preferencesLoadedRef.current) return; // Only load once
     if (!connected || !address) return; // Need wallet to load preferences
@@ -71,7 +71,7 @@ const MainApp = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected, address, location.pathname]); // api is stable, doesn't need to be in deps
 
-  // Save preferences to Redis when they change
+  // Save preferences to backend (Qdrant) when they change
   useEffect(() => {
     const savePreferences = async () => {
       if (!connected || !address) return; // Need wallet to save preferences

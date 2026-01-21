@@ -30,11 +30,6 @@ docs/
 
 # Tools and assets (not needed in production)
 tools/
-check_env.py
-check_redis.py
-
-# Supabase local config
-supabase/config.toml
 
 # Environment files (use Render env vars instead)
 .env
